@@ -45,9 +45,9 @@ class ClientHandler implements Runnable {
             this.close();
         }
     }
-    void sendMsg(String msg) {
+    void sendMessage(String message) {
         try {
-            outMessage.println(msg);
+            outMessage.println(message);
             outMessage.flush();
         } catch (Exception ex) {
             ex.printStackTrace();

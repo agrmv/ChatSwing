@@ -22,12 +22,12 @@ class Client extends JFrame {
     private Socket clientSocket;
 
     private JTextField jtfMessage;
-    private JTextField jtfName;
     private JTextArea jtaTextAreaMessage;
 
-    private String clientName = "";
+    private String clientName;
 
-    Client() {
+    Client(String clientName) {
+        this.clientName = clientName;
         try  {
             clientSocket = new Socket(host, port);
             inMessage = new Scanner(clientSocket.getInputStream());
@@ -82,8 +82,8 @@ class Client extends JFrame {
         return sdf.format(cal.getTime());
     }
 
-    private void sendMsg() {
-        String messageStr = getTime() + "  " + jtfName.getText() + ": " + jtfMessage.getText();
+    private void sendMessage() {
+        String messageStr = getTime() + "  " + getClientName() + ": " + jtfMessage.getText();
         outMessage.println(messageStr);
         outMessage.flush();
         jtfMessage.setText("");
@@ -91,9 +91,9 @@ class Client extends JFrame {
 
     private void guiDraw() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(600, 300, 600, 500);
+        setBounds(600, 300, 800, 500);
         setResizable(false);
-        setTitle("Client");
+        setTitle("Telegram");
 
         jtfMessage = new JTextField();
         jtaTextAreaMessage = new JTextArea();
@@ -103,21 +103,26 @@ class Client extends JFrame {
         JScrollPane jspAreaMessage = new JScrollPane(jtaTextAreaMessage);
         add(jspAreaMessage, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new GridLayout(1, 3, 5, 5));
         add(bottomPanel, BorderLayout.SOUTH);
-        JButton btnSend = new JButton("Send");
-        btnSend.setToolTipText("Broadcast a message");
-        bottomPanel.add(btnSend, BorderLayout.EAST);
 
         jtfMessage = new JTextField("Enter your message...");
-        bottomPanel.add(jtfMessage, BorderLayout.CENTER);
-        jtfName = new JTextField("Enter your name...");
-        bottomPanel.add(jtfName, BorderLayout.WEST);
+        bottomPanel.add(jtfMessage);
+
+        JButton btnSend = new JButton("Send");
+        bottomPanel.add(btnSend);
+
+        JButton btnFile = new JButton("File");
+        bottomPanel.add(btnFile);
+
+        JButton btnHistory = new JButton("Chat History");
+        bottomPanel.add(btnHistory);
+
 
         btnSend.addActionListener(e -> {
-            if (!jtfMessage.getText().trim().isEmpty() && !jtfName.getText().trim().isEmpty()) {
-                clientName = jtfName.getText();
-                sendMsg();
+            if (!jtfMessage.getText().trim().isEmpty()) {
+                sendMessage();
                 jtfMessage.grabFocus();
             }
         });
@@ -126,12 +131,6 @@ class Client extends JFrame {
             @Override
             public void focusGained(FocusEvent e) {
                 jtfMessage.setText("");
-            }
-        });
-        jtfName.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                jtfName.setText("");
             }
         });
     }

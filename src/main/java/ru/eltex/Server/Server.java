@@ -26,7 +26,7 @@ class Server {
 
     void sendMessageToAllClients(String msg) {
         for (ClientHandler o : clients) {
-            o.sendMsg(msg);
+            o.sendMessage(msg);
         }
 
     }

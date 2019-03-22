@@ -9,6 +9,8 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Scanner;
 
 class Client extends JFrame {
@@ -17,6 +19,8 @@ class Client extends JFrame {
     private PrintWriter outMessage;
     private Scanner inMessage;
 
+    private Socket clientSocket;
+
     private JTextField jtfMessage;
     private JTextField jtfName;
     private JTextArea jtaTextAreaMessage;
@@ -24,7 +28,8 @@ class Client extends JFrame {
     private String clientName = "";
 
     Client() {
-        try (Socket clientSocket = new Socket(host, port)) {
+        try  {
+            clientSocket = new Socket(host, port);
             inMessage = new Scanner(clientSocket.getInputStream());
             outMessage = new PrintWriter(clientSocket.getOutputStream());
             guiDraw();
@@ -71,8 +76,14 @@ class Client extends JFrame {
         return this.clientName;
     }
 
+    public String getTime() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(cal.getTime());
+    }
+
     private void sendMsg() {
-        String messageStr = jtfName.getText() + ": " + jtfMessage.getText();
+        String messageStr = getTime() + "  " + jtfName.getText() + ": " + jtfMessage.getText();
         outMessage.println(messageStr);
         outMessage.flush();
         jtfMessage.setText("");

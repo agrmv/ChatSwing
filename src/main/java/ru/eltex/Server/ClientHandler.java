@@ -5,13 +5,19 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Класс, в котором обрабатывается подключение клиента к серверу
+ * @author Алексей Громов
+ * @version 1.0.1
+ * */
+
 class ClientHandler implements Runnable {
 
     private PrintWriter outMessage;
     private Scanner inMessage;
     private Server server;
 
-    ClientHandler(Socket socket, Server server) throws IOException {
+    ClientHandler(Socket socket, Server server) {
         try {
             this.server = server;
             this.outMessage = new PrintWriter(socket.getOutputStream());
@@ -21,6 +27,10 @@ class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     * Переопределяем метод run(), который вызывается когда
+     * мы вызываем new Thread(client).start();
+     * */
     @Override
     public void run() {
         try {
@@ -29,12 +39,13 @@ class ClientHandler implements Runnable {
                 break;
             }
             while (true) {
+                /**Если от клиента пришло сообщение*/
                 if (inMessage.hasNext()) {
                     String clientMessage = inMessage.nextLine();
                     if (clientMessage.equalsIgnoreCase("##session##end##")) {
                         break;
                     }
-                    System.out.println(clientMessage);
+                    /**Отправляем сообщение всем клиентам*/
                     server.sendMessageToAllClients(clientMessage);
                 }
                 Thread.sleep(100);

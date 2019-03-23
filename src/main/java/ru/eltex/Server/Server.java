@@ -1,5 +1,7 @@
 package ru.eltex.Server;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -37,6 +39,7 @@ class Server {
         for (ClientHandler o : clients) {
             o.sendMessage(message);
         }
+        System.out.println(message);
 
     }
 

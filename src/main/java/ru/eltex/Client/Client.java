@@ -1,5 +1,6 @@
 package ru.eltex.Client;
 
+import ru.eltex.DataBase.MessageDB;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
@@ -32,6 +34,8 @@ class Client extends JFrame {
     private JTextArea jtaTextAreaMessage;
 
     private String clientName;
+
+    private MessageDB db = new MessageDB();
 
     Client(String clientName) {
         this.clientName = clientName;
@@ -110,6 +114,7 @@ class Client extends JFrame {
     /**Отправляет сообщения*/
     private void sendMessage() {
         outMessage.println(getTime() + "  " + getClientName() + ": " + jtfMessage.getText());
+        db.addToDB(getTime(), getClientName(), jtfMessage.getText());
         outMessage.flush();
         jtfMessage.setText("");
     }
@@ -134,14 +139,17 @@ class Client extends JFrame {
         JScrollPane jspAreaMessage = new JScrollPane(jtaTextAreaMessage);
         add(jspAreaMessage, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
 
         jtfMessage = new JTextField("Enter your message...");
         bottomPanel.add(jtfMessage);
 
         JButton btnSend = new JButton("Send");
-        bottomPanel.add(btnSend, BorderLayout.EAST);
+        bottomPanel.add(btnSend);
+
+        JButton btnHistory = new JButton("History");
+        bottomPanel.add(btnHistory);
 
         /**Обработчик события нажатия на кнопку отправить*/
         btnSend.addActionListener(e -> {
@@ -149,6 +157,11 @@ class Client extends JFrame {
                 sendMessage();
                 jtfMessage.grabFocus();
             }
+        });
+
+        /**Обработчик события нажатия на кнопку отправить*/
+        btnHistory.addActionListener(e -> {
+            db.showDB();
         });
 
         /**Обработчик события нажатия на enter.*/

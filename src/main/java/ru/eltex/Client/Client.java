@@ -3,10 +3,7 @@ package ru.eltex.Client;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -137,28 +134,29 @@ class Client extends JFrame {
         JScrollPane jspAreaMessage = new JScrollPane(jtaTextAreaMessage);
         add(jspAreaMessage, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new GridLayout(1, 3, 5, 5));
+        JPanel bottomPanel = new JPanel(new BorderLayout());
         add(bottomPanel, BorderLayout.SOUTH);
 
         jtfMessage = new JTextField("Enter your message...");
         bottomPanel.add(jtfMessage);
 
         JButton btnSend = new JButton("Send");
-        bottomPanel.add(btnSend);
-
-        JButton btnFile = new JButton("File");
-        bottomPanel.add(btnFile);
-
-        JButton btnHistory = new JButton("Chat History");
-        bottomPanel.add(btnHistory);
-
+        bottomPanel.add(btnSend, BorderLayout.EAST);
 
         /**Обработчик события нажатия на кнопку отправить*/
         btnSend.addActionListener(e -> {
             if (!jtfMessage.getText().trim().isEmpty()) {
                 sendMessage();
                 jtfMessage.grabFocus();
+            }
+        });
+
+        /**Обработчик события нажатия на enter.*/
+        jtfMessage.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode()==KeyEvent.VK_ENTER){
+                    btnSend.doClick();
+                }
             }
         });
 

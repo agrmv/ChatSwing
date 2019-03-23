@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * Класс, который описывает окно для ввода имени
@@ -28,12 +30,24 @@ class EnterNameFrame extends JFrame {
 
         JPanel bottomPanel = new JPanel();
         add(bottomPanel);
-        jtfName = new JTextField("Enter your name...");
+        jtfName = new JTextField(10);
         bottomPanel.add(jtfName);
-        /**
-         * Обработчик фокуса для поля ввода имени.
-         * При фокусе поле очищается.
-         * */
+
+        JButton btnOk = new JButton("Ok");
+        bottomPanel.add(btnOk);
+
+        /**Обработчик события нажатия на enter.*/
+        jtfName.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode()==KeyEvent.VK_ENTER){
+                    if (!jtfName.getText().trim().isEmpty()) {
+                        btnOk.doClick();
+                    }
+                }
+            }
+        });
+
+        /**Обработчик фокуса для поля ввода имени.*/
         jtfName.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -42,8 +56,6 @@ class EnterNameFrame extends JFrame {
         });
 
         /**Обработчик события нажатия на кнопку Ok.*/
-        JButton btnOk = new JButton("Ok");
-        bottomPanel.add(btnOk);
         btnOk.addActionListener(e -> {
             if (!jtfName.getText().trim().isEmpty()) {
                 clientName = jtfName.getText();

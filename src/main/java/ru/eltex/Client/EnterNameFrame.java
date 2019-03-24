@@ -10,26 +10,28 @@ import java.awt.event.KeyEvent;
 /**
  * Класс, который описывает окно для ввода имени
  * @author Alekse Gromov
- * @version 1.0.2
+ * @version 1.0.3
  * */
 
-class EnterNameFrame extends JFrame {
+class EnterNameFrame  {
     /**Поле для ввода имени*/
     private JTextField jtfName;
     private String clientName;
 
     EnterNameFrame() {
-        /**При нажатии на крестик окно закрывается*/
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        initEntrNameFrame();
+    }
+
+    private void initEntrNameFrame() {
+        JFrame enterNameFrame = new JFrame("Enter your name");
+        enterNameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         /**Получаем размер экрана*/
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        /**Устанавливаем положение окна по середине экрана*/
-        setBounds(screenSize.width/ 2 - 100,screenSize.height / 2 - 35, 200, 70);
-        setResizable(false);
-        setTitle("Enter your name");
+        enterNameFrame.setBounds(screenSize.width/ 2 - 100,screenSize.height / 2 - 35, 200, 70);
+        enterNameFrame.setResizable(false);
 
         JPanel bottomPanel = new JPanel();
-        add(bottomPanel);
+        enterNameFrame.add(bottomPanel);
         jtfName = new JTextField(10);
         bottomPanel.add(jtfName);
 
@@ -60,9 +62,9 @@ class EnterNameFrame extends JFrame {
             if (!jtfName.getText().trim().isEmpty()) {
                 clientName = jtfName.getText();
                 new Client(clientName);
-                dispose();
+                enterNameFrame.dispose();
             }
         });
-        setVisible(true);
+        enterNameFrame.setVisible(true);
     }
 }

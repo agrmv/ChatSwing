@@ -1,11 +1,14 @@
 package ru.eltex.DataBase;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.sql.*;
 
 /**
  * TODO LIST: refracroring !!!!
  * @author Алексей Громов
+ * @version 1.0.5
  */
 public class MessageDB {
 
@@ -18,10 +21,43 @@ public class MessageDB {
     private ResultSet resultSet;
 
     private JTable messageHistoryTable;
-    private int messageCount = 1;
+    private int messageCount;
 
-    public MessageDB() {}
-    public void addToDB(String time, String clientName, String message) {
+    private void closeConnection() {
+        try { connection.close(); } catch(SQLException sqlEx) { sqlEx.printStackTrace(); }
+        try { statement.close(); } catch(SQLException sqlEx) { sqlEx.printStackTrace(); }
+        try { resultSet.close(); } catch(SQLException sqlEx) { sqlEx.printStackTrace(); }
+    }
+
+    private int getMessageCount() {
+        try {
+            connection = DriverManager.getConnection(url, user, password);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("select MAX(Count) from messagehistory");
+            while (resultSet.next()) {
+                messageCount = resultSet.getInt(1);
+            }
+        } catch (SQLException sqlEx) {
+            sqlEx.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+        return messageCount;
+    }
+
+    protected void removeDB() {
+        try {
+            connection = DriverManager.getConnection(url, user, password);
+            statement = connection.createStatement();
+            statement.executeUpdate("TRUNCATE messagehistory");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection();
+        }
+    }
+
+    protected void addToDB(String time, String clientName, String message) {
         String insert = " insert into messagehistory (Count, Time, Name, Message)" + " values (?, ?, ?, ?)";
         try {
             connection = DriverManager.getConnection(url, user, password);
@@ -37,53 +73,63 @@ public class MessageDB {
 
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
+        } finally {
+            closeConnection();
         }
-    }
-
-    private int getMessageCount() {
-        try {
-            connection = DriverManager.getConnection(url, user, password);
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("select MAX(Count) from messagehistory");
-            while (resultSet.next()) {
-                messageCount = resultSet.getInt(1);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return messageCount;
     }
 
     private void initFrame() {
-        messageHistoryTable = new JTable(getMessageCount(), 3);
-        messageHistoryTable.setBounds(20, 10, 500, 500);
+        JFrame dbFrame = new JFrame("Message History");
+        dbFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        dbFrame.setSize(500, 500);
+        dbFrame.setResizable(false);
+        dbFrame.setVisible(true);
 
-        JFrame frame = new JFrame("Message History");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setLayout(null);
-        frame.setSize(500, 500);
-        frame.setResizable(false);
-        frame.setVisible(true);
-        frame.add(messageHistoryTable);
+        DefaultTableModel tableModel = new DefaultTableModel() {
+            String[] employee = {"Time", "Name", "Message"};
+
+            @Override
+            public int getColumnCount() {
+                return employee.length;
+            }
+
+            @Override
+            public String getColumnName(int index) {
+                return employee[index];
+            }
+        };
+        tableModel.setRowCount(getMessageCount());
+        messageHistoryTable = new JTable(tableModel);
+        messageHistoryTable.setBounds(20, 10, 500, 500);
+        dbFrame.add(messageHistoryTable);
+
+        dbFrame.add(new JScrollPane(messageHistoryTable));
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        dbFrame.add(bottomPanel, BorderLayout.SOUTH);
+
+        JButton btnDelete = new JButton("Delete");
+        bottomPanel.add(btnDelete);
+
+        /**Обработчик события нажатия на кнопку Delte.*/
+        btnDelete.addActionListener(e -> removeDB());
     }
 
-    public void showDB() {
+    protected void showDB() {
         try {
             initFrame();
             connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
             resultSet = statement.executeQuery("select  Time, Name, Message from messagehistory");
-            int li_row = 0;
             while (resultSet.next()) {
-                messageHistoryTable.setValueAt(resultSet.getString("Time"), li_row, 0);
-                messageHistoryTable.setValueAt(resultSet.getString("Name"), li_row, 1);
-                messageHistoryTable.setValueAt(resultSet.getString("Message"), li_row, 2);
-                li_row++;
+                messageHistoryTable.setValueAt(resultSet.getString("Time"), resultSet.getRow() - 1, 0);
+                messageHistoryTable.setValueAt(resultSet.getString("Name"), resultSet.getRow() - 1, 1);
+                messageHistoryTable.setValueAt(resultSet.getString("Message"), resultSet.getRow() - 1, 2);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException sqlEx) {
+            sqlEx.printStackTrace();
         } finally {
-
+            closeConnection();
         }
     }
 }

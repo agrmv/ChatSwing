@@ -16,10 +16,10 @@ import java.util.Scanner;
 /**
  * Класс, который описывает логику работы клиента
  * @author Алексей Громов
- * @version 1.0.4
+ * @version 1.0.5
  * */
 
-class Client extends JFrame {
+class Client extends MessageDB {
     private static final String host = "localhost";
     private static final int port = 8080;
     private PrintWriter outMessage;
@@ -34,8 +34,6 @@ class Client extends JFrame {
 
     private String clientName;
 
-    private MessageDB db = new MessageDB();
-
     Client(String clientName) {
         this.clientName = clientName;
         try  {
@@ -46,7 +44,7 @@ class Client extends JFrame {
             outMessage = new PrintWriter(clientSocket.getOutputStream());
 
             /**Отрисовываем окно чата*/
-            drawClientFrame();
+            initClientFrame();
 
             /**Начинаем работу с сервером в отдельном потоке*/
             new Thread(() -> {
@@ -61,31 +59,6 @@ class Client extends JFrame {
                 } catch (Exception ex) {
                 }
             }).start();
-
-            /**Обработчик события закрытия клиентского окна*/
-            addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    super.windowClosing(e);
-                    try {
-                        if (!getClientName().isEmpty()) {
-                            outMessage.println(getClientName() + " left the chat!");
-                        } else {
-                            outMessage.println("Member left the chat without introducing himself!");
-                        }
-                        /**Отправляем служебное сосбщение, завершающие текущую сессию*/
-                        outMessage.println("##session##end##");
-                        outMessage.flush();
-                        outMessage.close();
-                        inMessage.close();
-                        clientSocket.close();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
-            /**Отображаем форму*/
-            setVisible(true);
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -113,61 +86,67 @@ class Client extends JFrame {
     /**Отправляет сообщения*/
     private void sendMessage() {
         outMessage.println(getTime() + "  " + getClientName() + ": " + jtfMessage.getText());
-        db.addToDB(getTime(), getClientName(), jtfMessage.getText());
+        addToDB(getTime(), getClientName(), jtfMessage.getText());
         outMessage.flush();
         jtfMessage.setText("");
     }
 
     /**Отрисовка интерфеса чата*/
-    private void drawClientFrame() throws IOException {
+    private void initClientFrame() throws IOException {
+        /**Создаем окно чата*/
+        JFrame clientFrame = new JFrame("Message History");
+
         /**При нажатии на крестик окно закрывается*/
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        clientFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
         /**Получаем размер экрана*/
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        /**Устанавливаем положение окна по середине экрана*/
-        setBounds(screenSize.width/ 2 - 400,screenSize.height / 2 - 250, 800, 500);
-        setResizable(false);
-        setTitle("Telegram");
-        setIconImage(ImageIO.read(new File("src/main/resources/telegramIcon.png")));
 
-        jtfMessage = new JTextField();
+        /**Устанавливаем положение окна по середине экрана*/
+        clientFrame.setBounds(screenSize.width/ 2 - 400,screenSize.height / 2 - 250, 800, 500);
+
+        /**Запрещаем изменение размера*/
+        clientFrame.setResizable(false);
+
+        /**Устанавливаем иконку окна*/
+        clientFrame.setIconImage(ImageIO.read(new File("src/main/resources/telegramIcon.png")));
+
+        /**Создаем панель для размещения кнопок и полей*/
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        clientFrame.add(bottomPanel, BorderLayout.SOUTH);
+
+        /**Создаем поле для ввода сообщения*/
+        jtfMessage = new JTextField("Enter your message...");
+
+        /**Размещаем поле на панели*/
+        bottomPanel.add(jtfMessage, BorderLayout.CENTER);
+
+        /**Создаем поле для вывода сообщения*/
         jtaTextAreaMessage = new JTextArea();
         jtaTextAreaMessage.setEditable(false);
         jtaTextAreaMessage.setLineWrap(true);
 
+        /**Добавляем скрол для поля вывода сообщений*/
         JScrollPane jspAreaMessage = new JScrollPane(jtaTextAreaMessage);
-        add(jspAreaMessage, BorderLayout.CENTER);
+        clientFrame.add(jspAreaMessage, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel();
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        jtfMessage = new JTextField("Enter your message...");
-        bottomPanel.add(jtfMessage);
-
-        JButton btnSend = new JButton("Send");
-        bottomPanel.add(btnSend);
-
+        /**Создаем кнопку "History" и добавляем ее на панель*/
         JButton btnHistory = new JButton("History");
-        bottomPanel.add(btnHistory);
-
-        /**Обработчик события нажатия на кнопку отправить*/
-        btnSend.addActionListener(e -> {
-            if (!jtfMessage.getText().trim().isEmpty()) {
-                sendMessage();
-                jtfMessage.grabFocus();
-            }
-        });
+        bottomPanel.add(btnHistory, BorderLayout.EAST);
 
         /**Обработчик события нажатия на кнопку отправить*/
         btnHistory.addActionListener(e -> {
-            db.showDB();
+            showDB();
         });
 
         /**Обработчик события нажатия на enter.*/
         jtfMessage.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode()==KeyEvent.VK_ENTER){
-                    btnSend.doClick();
+                    if (!jtfMessage.getText().trim().isEmpty()) {
+                        sendMessage();
+                        jtfMessage.grabFocus();
+                    }
                 }
             }
         });
@@ -182,5 +161,31 @@ class Client extends JFrame {
                 jtfMessage.setText("");
             }
         });
+
+        /**Обработчик события закрытия клиентского окна*/
+        clientFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                try {
+                    if (!getClientName().isEmpty()) {
+                        outMessage.println(getClientName() + " left the chat!");
+                    } else {
+                        outMessage.println("Member left the chat without introducing himself!");
+                    }
+                    /**Отправляем служебное сосбщение, завершающие текущую сессию*/
+                    outMessage.println("##session##end##");
+                    outMessage.flush();
+                    outMessage.close();
+                    inMessage.close();
+                    clientSocket.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        /**Отображаем форму*/
+        clientFrame.setVisible(true);
     }
 }

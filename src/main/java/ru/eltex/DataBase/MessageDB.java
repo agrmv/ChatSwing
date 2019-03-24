@@ -45,7 +45,7 @@ public class MessageDB {
         return messageCount;
     }
 
-    protected void removeDB() {
+    private void removeDB() {
         try {
             connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
@@ -112,7 +112,12 @@ public class MessageDB {
         bottomPanel.add(btnDelete);
 
         /**Обработчик события нажатия на кнопку Delte.*/
-        btnDelete.addActionListener(e -> removeDB());
+
+        btnDelete.addActionListener(e -> {
+            dbFrame.dispose();
+            removeDB();
+            initFrame();
+        });
     }
 
     protected void showDB() {

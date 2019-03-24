@@ -135,9 +135,7 @@ class Client extends MessageDB {
         bottomPanel.add(btnHistory, BorderLayout.EAST);
 
         /**Обработчик события нажатия на кнопку отправить*/
-        btnHistory.addActionListener(e -> {
-            showDB();
-        });
+        btnHistory.addActionListener(e -> showDB());
 
         /**Обработчик события нажатия на enter.*/
         jtfMessage.addKeyListener(new KeyAdapter() {

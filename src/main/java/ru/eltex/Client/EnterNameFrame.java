@@ -19,10 +19,10 @@ class EnterNameFrame  {
     private String clientName;
 
     EnterNameFrame() {
-        initEntrNameFrame();
+        initEnterNameFrame();
     }
 
-    private void initEntrNameFrame() {
+    private void initEnterNameFrame() {
         JFrame enterNameFrame = new JFrame("Enter your name");
         enterNameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         /**Получаем размер экрана*/

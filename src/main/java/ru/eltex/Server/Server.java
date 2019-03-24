@@ -34,7 +34,7 @@ class Server {
         }
     }
 
-    /**Отправляем сообщения все клиентам*/
+    /**Отправляем сообщения всем клиентам*/
     void sendMessageToAllClients(String message) {
         for (ClientHandler o : clients) {
             o.sendMessage(message);

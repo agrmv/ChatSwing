@@ -8,7 +8,7 @@ import java.awt.event.WindowEvent;
 import java.sql.*;
 
 /**
- * TODO LIST: refracroring !!!!
+ * Класс, который описывает логику работы базы данных
  * @author Алексей Громов
  * @version 1.0.5
  */
@@ -48,7 +48,7 @@ public class MessageDB {
         return messageCount;
     }
 
-    private void removeDB() {
+    private void deleteDB() {
         try {
             connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
@@ -89,16 +89,16 @@ public class MessageDB {
         dbFrame.setVisible(true);
 
         DefaultTableModel tableModel = new DefaultTableModel() {
-            String[] employee = {"Time", "Name", "Message"};
+            String[] columnName = {"Time", "Name", "Message"};
 
             @Override
             public int getColumnCount() {
-                return employee.length;
+                return columnName.length;
             }
 
             @Override
             public String getColumnName(int index) {
-                return employee[index];
+                return columnName[index];
             }
         };
         tableModel.setRowCount(getMessageCount());
@@ -118,7 +118,7 @@ public class MessageDB {
 
         btnDelete.addActionListener(e -> {
             dbFrame.dispose();
-            removeDB();
+            deleteDB();
             initFrame();
         });
 

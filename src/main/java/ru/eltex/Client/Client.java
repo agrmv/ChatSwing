@@ -57,6 +57,7 @@ class Client extends MessageDB {
                         }
                     }
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }).start();
 
@@ -94,7 +95,7 @@ class Client extends MessageDB {
     /**Отрисовка интерфеса чата*/
     private void initClientFrame() throws IOException {
         /**Создаем окно чата*/
-        JFrame clientFrame = new JFrame("Message History");
+        JFrame clientFrame = new JFrame("Telegram");
 
         /**При нажатии на крестик окно закрывается*/
         clientFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

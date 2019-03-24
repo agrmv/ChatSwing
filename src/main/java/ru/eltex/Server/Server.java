@@ -1,5 +1,7 @@
 package ru.eltex.Server;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,11 +34,12 @@ class Server {
         }
     }
 
-    /**Отправляем сообщения все клиентам*/
+    /**Отправляем сообщения всем клиентам*/
     void sendMessageToAllClients(String message) {
         for (ClientHandler o : clients) {
             o.sendMessage(message);
         }
+        System.out.println(message);
 
     }
 

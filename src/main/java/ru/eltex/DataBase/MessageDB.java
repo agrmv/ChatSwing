@@ -3,6 +3,8 @@ package ru.eltex.DataBase;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.*;
 
 /**
@@ -21,6 +23,7 @@ public class MessageDB {
     private ResultSet resultSet;
 
     private JTable messageHistoryTable;
+    private JFrame dbFrame;
     private int messageCount;
 
     private void closeConnection() {
@@ -79,7 +82,7 @@ public class MessageDB {
     }
 
     private void initFrame() {
-        JFrame dbFrame = new JFrame("Message History");
+        dbFrame = new JFrame("Message History");
         dbFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dbFrame.setSize(500, 500);
         dbFrame.setResizable(false);
@@ -118,23 +121,32 @@ public class MessageDB {
             removeDB();
             initFrame();
         });
+
+        dbFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dbFrame = null;
+            }
+        });
     }
 
     protected void showDB() {
-        try {
-            initFrame();
-            connection = DriverManager.getConnection(url, user, password);
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("select  Time, Name, Message from messagehistory");
-            while (resultSet.next()) {
-                messageHistoryTable.setValueAt(resultSet.getString("Time"), resultSet.getRow() - 1, 0);
-                messageHistoryTable.setValueAt(resultSet.getString("Name"), resultSet.getRow() - 1, 1);
-                messageHistoryTable.setValueAt(resultSet.getString("Message"), resultSet.getRow() - 1, 2);
+        if (dbFrame == null) {
+            try {
+                initFrame();
+                connection = DriverManager.getConnection(url, user, password);
+                statement = connection.createStatement();
+                resultSet = statement.executeQuery("select  Time, Name, Message from messagehistory");
+                while (resultSet.next()) {
+                    messageHistoryTable.setValueAt(resultSet.getString("Time"), resultSet.getRow() - 1, 0);
+                    messageHistoryTable.setValueAt(resultSet.getString("Name"), resultSet.getRow() - 1, 1);
+                    messageHistoryTable.setValueAt(resultSet.getString("Message"), resultSet.getRow() - 1, 2);
+                }
+            } catch (SQLException sqlEx) {
+                sqlEx.printStackTrace();
+            } finally {
+                closeConnection();
             }
-        } catch (SQLException sqlEx) {
-            sqlEx.printStackTrace();
-        } finally {
-            closeConnection();
         }
     }
 }

@@ -15,39 +15,48 @@ public class MessageDB {
 
     private Connection connection;
     private Statement statement;
+    private ResultSet resultSet;
+
+    private JTable messageHistoryTable;
+    private int messageCount = 1;
 
     public MessageDB() {}
-
     public void addToDB(String time, String clientName, String message) {
-        String query = " insert into messagehistory (Time, Name, Message)" + " values (?, ?, ?)";
+        String insert = " insert into messagehistory (Count, Time, Name, Message)" + " values (?, ?, ?, ?)";
         try {
             connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
 
             /**Добавляем данные в таблицу*/
-            PreparedStatement preparedStmt = connection.prepareStatement(query);
-            preparedStmt.setString(1, time);
-            preparedStmt.setString(2, clientName);
-            preparedStmt.setString(3, message);
+            PreparedStatement preparedStmt = connection.prepareStatement(insert);
+            preparedStmt.setInt(1, getMessageCount() + 1);
+            preparedStmt.setString(2, time);
+            preparedStmt.setString(3, clientName);
+            preparedStmt.setString(4, message);
             preparedStmt.execute();
 
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
-        } finally {
-            try {
-                connection.close();
-                //statement.executeUpdate("TRUNCATE messagehistory");
-            } catch (SQLException se) { /**/ }
-            try {
-                statement.close();
-            } catch (SQLException se) { /**/  }
         }
     }
 
-    public void showDB() {
-        JTable mysTable;
-        mysTable = new JTable(10, 3);
-        mysTable.setBounds(20, 10, 500, 500);
+    private int getMessageCount() {
+        try {
+            connection = DriverManager.getConnection(url, user, password);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("select MAX(Count) from messagehistory");
+            while (resultSet.next()) {
+                messageCount = resultSet.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return messageCount;
+    }
+
+    private void initFrame() {
+        messageHistoryTable = new JTable(getMessageCount(), 3);
+        messageHistoryTable.setBounds(20, 10, 500, 500);
 
         JFrame frame = new JFrame("Message History");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -55,22 +64,26 @@ public class MessageDB {
         frame.setSize(500, 500);
         frame.setResizable(false);
         frame.setVisible(true);
-        frame.add(mysTable);
+        frame.add(messageHistoryTable);
+    }
 
+    public void showDB() {
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmts = con.createStatement();
-            String query = "select  Time, Name, Message from messagehistory";
-            ResultSet rs = stmts.executeQuery(query);
+            initFrame();
+            connection = DriverManager.getConnection(url, user, password);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("select  Time, Name, Message from messagehistory");
             int li_row = 0;
-            while (rs.next()) {
-                mysTable.setValueAt(rs.getString("Time"), li_row, 0);
-                mysTable.setValueAt(rs.getString("Name"), li_row, 1);
-                mysTable.setValueAt(rs.getString("Message"), li_row, 2);
+            while (resultSet.next()) {
+                messageHistoryTable.setValueAt(resultSet.getString("Time"), li_row, 0);
+                messageHistoryTable.setValueAt(resultSet.getString("Name"), li_row, 1);
+                messageHistoryTable.setValueAt(resultSet.getString("Message"), li_row, 2);
                 li_row++;
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+
         }
     }
 }

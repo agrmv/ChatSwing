@@ -113,7 +113,7 @@ class Client extends MessageDB {
         clientFrame.setIconImage(ImageIO.read(new File("src/main/resources/telegramIcon.png")));
 
         /**Создаем панель для размещения кнопок и полей*/
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 0, 0));
         clientFrame.add(bottomPanel, BorderLayout.SOUTH);
 
         /**Создаем поле для ввода сообщения*/
@@ -131,6 +131,17 @@ class Client extends MessageDB {
         JScrollPane jspAreaMessage = new JScrollPane(jtaTextAreaMessage);
         clientFrame.add(jspAreaMessage, BorderLayout.CENTER);
 
+        /**Создаем кнопку "Send" и добавляем ее на панель*/
+        JButton btnSend = new JButton("Send");
+        bottomPanel.add(btnSend, BorderLayout.EAST);
+
+        btnSend.addActionListener(e -> {
+            if (!jtfMessage.getText().trim().isEmpty() && !jtfMessage.getText().equals("Enter your message...")) {
+                sendMessage();
+                jtfMessage.grabFocus();
+            }
+        });
+
         /**Создаем кнопку "History" и добавляем ее на панель*/
         JButton btnHistory = new JButton("History");
         bottomPanel.add(btnHistory, BorderLayout.EAST);
@@ -142,10 +153,7 @@ class Client extends MessageDB {
         jtfMessage.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode()==KeyEvent.VK_ENTER){
-                    if (!jtfMessage.getText().trim().isEmpty()) {
-                        sendMessage();
-                        jtfMessage.grabFocus();
-                    }
+                    btnSend.doClick();
                 }
             }
         });

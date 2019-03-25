@@ -100,6 +100,11 @@ public class MessageDB {
             public String getColumnName(int index) {
                 return columnName[index];
             }
+
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
         };
         tableModel.setRowCount(getMessageCount());
         messageHistoryTable = new JTable(tableModel);

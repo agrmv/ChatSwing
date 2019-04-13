@@ -66,7 +66,7 @@ public class MessageDB {
             connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
 
-            /**Добавляем данные в таблицу*/
+            /*Добавляем данные в таблицу*/
             PreparedStatement preparedStmt = connection.prepareStatement(insert);
             preparedStmt.setInt(1, getMessageCount() + 1);
             preparedStmt.setString(2, time);
@@ -119,8 +119,7 @@ public class MessageDB {
         JButton btnDelete = new JButton("Delete");
         bottomPanel.add(btnDelete);
 
-        /**Обработчик события нажатия на кнопку Delte.*/
-
+        /*Обработчик события нажатия на кнопку Delete.*/
         btnDelete.addActionListener(e -> {
             dbFrame.dispose();
             deleteDB();

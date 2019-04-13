@@ -37,22 +37,22 @@ class Client extends MessageDB {
     Client(String clientName) {
         this.clientName = clientName;
         try  {
-            /**Подключаемся к серверу*/
+            /*Подключаемся к серверу*/
             clientSocket = new Socket(host, port);
 
             inMessage = new Scanner(clientSocket.getInputStream());
             outMessage = new PrintWriter(clientSocket.getOutputStream());
 
-            /**Отрисовываем окно чата*/
+            /*Отрисовываем окно чата*/
             initClientFrame();
 
-            /**Начинаем работу с сервером в отдельном потоке*/
+            /*Начинаем работу с сервером в отдельном потоке*/
             new Thread(() -> {
                 try {
                     while (true) {
-                        /**Если сообщение есть*/
+                        /*Если сообщение есть*/
                         if (inMessage.hasNext()) {
-                            /**Считываем его и выводим**/
+                            /*Считываем его и выводим**/
                             jtaTextAreaMessage.append(inMessage.nextLine() + "\n");
                         }
                     }
@@ -94,44 +94,44 @@ class Client extends MessageDB {
 
     /**Отрисовка интерфеса чата*/
     private void initClientFrame() throws IOException {
-        /**Создаем окно чата*/
+        /*Создаем окно чата*/
         JFrame clientFrame = new JFrame("Telegram");
 
-        /**При нажатии на крестик окно закрывается*/
+        /*При нажатии на крестик окно закрывается*/
         clientFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        /**Получаем размер экрана*/
+        /*Получаем размер экрана*/
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        /**Устанавливаем положение окна по середине экрана*/
+        /*Устанавливаем положение окна по середине экрана*/
         clientFrame.setBounds(screenSize.width/ 2 - 400,screenSize.height / 2 - 250, 800, 500);
 
-        /**Запрещаем изменение размера*/
+        /*Запрещаем изменение размера*/
         clientFrame.setResizable(false);
 
-        /**Устанавливаем иконку окна*/
+        /*Устанавливаем иконку окна*/
         clientFrame.setIconImage(ImageIO.read(new File("src/main/resources/telegramIcon.png")));
 
-        /**Создаем панель для размещения кнопок и полей*/
+        /*Создаем панель для размещения кнопок и полей*/
         JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 0, 0));
         clientFrame.add(bottomPanel, BorderLayout.SOUTH);
 
-        /**Создаем поле для ввода сообщения*/
+        /*Создаем поле для ввода сообщения*/
         jtfMessage = new JTextField("Enter your message...");
 
-        /**Размещаем поле на панели*/
+        /*Размещаем поле на панели*/
         bottomPanel.add(jtfMessage, BorderLayout.CENTER);
 
-        /**Создаем поле для вывода сообщения*/
+        /*Создаем поле для вывода сообщения*/
         jtaTextAreaMessage = new JTextArea();
         jtaTextAreaMessage.setEditable(false);
         jtaTextAreaMessage.setLineWrap(true);
 
-        /**Добавляем скрол для поля вывода сообщений*/
+        /*Добавляем скрол для поля вывода сообщений*/
         JScrollPane jspAreaMessage = new JScrollPane(jtaTextAreaMessage);
         clientFrame.add(jspAreaMessage, BorderLayout.CENTER);
 
-        /**Создаем кнопку "Send" и добавляем ее на панель*/
+        /*Создаем кнопку "Send" и добавляем ее на панель*/
         JButton btnSend = new JButton("Send");
         bottomPanel.add(btnSend, BorderLayout.EAST);
 
@@ -142,14 +142,14 @@ class Client extends MessageDB {
             }
         });
 
-        /**Создаем кнопку "History" и добавляем ее на панель*/
+        /*Создаем кнопку "History" и добавляем ее на панель*/
         JButton btnHistory = new JButton("History");
         bottomPanel.add(btnHistory, BorderLayout.EAST);
 
-        /**Обработчик события нажатия на кнопку отправить*/
+        /*Обработчик события нажатия на кнопку отправить*/
         btnHistory.addActionListener(e -> showDB());
 
-        /**Обработчик события нажатия на enter.*/
+        /*Обработчик события нажатия на enter.*/
         jtfMessage.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode()==KeyEvent.VK_ENTER){
@@ -158,7 +158,7 @@ class Client extends MessageDB {
             }
         });
 
-        /**
+        /*
          * Обработчик фокуса для поля ввода сообщения.
          * При фокусе поле очищается.
          * */
@@ -169,7 +169,7 @@ class Client extends MessageDB {
             }
         });
 
-        /**Обработчик события закрытия клиентского окна*/
+        /*Обработчик события закрытия клиентского окна*/
         clientFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -192,7 +192,7 @@ class Client extends MessageDB {
             }
         });
 
-        /**Отображаем форму*/
+        /*Отображаем форму*/
         clientFrame.setVisible(true);
     }
 }

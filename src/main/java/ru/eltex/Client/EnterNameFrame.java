@@ -25,7 +25,7 @@ class EnterNameFrame  {
     private void initEnterNameFrame() {
         JFrame enterNameFrame = new JFrame("Enter your name");
         enterNameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        /**Получаем размер экрана*/
+        /*Получаем размер экрана*/
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         enterNameFrame.setBounds(screenSize.width/ 2 - 100,screenSize.height / 2 - 35, 200, 70);
         enterNameFrame.setResizable(false);
@@ -38,7 +38,7 @@ class EnterNameFrame  {
         JButton btnOk = new JButton("Ok");
         bottomPanel.add(btnOk);
 
-        /**Обработчик события нажатия на enter.*/
+        /*Обработчик события нажатия на enter.*/
         jtfName.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode()==KeyEvent.VK_ENTER){
@@ -49,7 +49,7 @@ class EnterNameFrame  {
             }
         });
 
-        /**Обработчик фокуса для поля ввода имени.*/
+        /*Обработчик фокуса для поля ввода имени.*/
         jtfName.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -57,7 +57,7 @@ class EnterNameFrame  {
             }
         });
 
-        /**Обработчик события нажатия на кнопку Ok.*/
+        /*Обработчик события нажатия на кнопку Ok.*/
         btnOk.addActionListener(e -> {
             if (!jtfName.getText().trim().isEmpty()) {
                 clientName = jtfName.getText();

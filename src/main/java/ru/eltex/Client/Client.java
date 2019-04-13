@@ -87,7 +87,8 @@ class Client extends MessageDB {
     /**Отправляет сообщения*/
     private void sendMessage() {
         outMessage.println(getTime() + "  " + getClientName() + ": " + jtfMessage.getText());
-        addToDB(getTime(), getClientName(), jtfMessage.getText());
+        /*Записываем сообщение в базу данных*/
+        //addToDB(getTime(), getClientName(), jtfMessage.getText());
         outMessage.flush();
         jtfMessage.setText("");
     }
@@ -180,7 +181,7 @@ class Client extends MessageDB {
                     } else {
                         outMessage.println("Member left the chat without introducing himself!");
                     }
-                    /**Отправляем служебное сосбщение, завершающие текущую сессию*/
+                    /*Отправляем служебное сосбщение, завершающие текущую сессию*/
                     outMessage.println("##session##end##");
                     outMessage.flush();
                     outMessage.close();

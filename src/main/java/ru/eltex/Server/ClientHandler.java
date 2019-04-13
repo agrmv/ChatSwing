@@ -39,13 +39,13 @@ class ClientHandler implements Runnable {
                 break;
             }
             while (true) {
-                /**Если от клиента пришло сообщение*/
+                /*Если от клиента пришло сообщение*/
                 if (inMessage.hasNext()) {
                     String clientMessage = inMessage.nextLine();
                     if (clientMessage.equalsIgnoreCase("##session##end##")) {
                         break;
                     }
-                    /**Отправляем сообщение всем клиентам*/
+                    /*Отправляем сообщение всем клиентам*/
                     server.sendMessageToAllClients(clientMessage);
                 }
                 Thread.sleep(100);

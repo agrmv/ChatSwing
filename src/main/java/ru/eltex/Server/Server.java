@@ -1,7 +1,5 @@
 package ru.eltex.Server;
 
-import jdk.swing.interop.SwingInterOpUtils;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,10 +21,10 @@ class Server {
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                /** создаём обработчик клиента, который подключился к серверу this - это наш сервер*/
+                /*Cоздаём обработчик клиента, который подключился к серверу this - это наш сервер*/
                 ClientHandler client = new ClientHandler(clientSocket, this);
                 clients.add(client);
-                /**Каждое подключение обрабатывается в новом потоке*/
+                /*Каждое подключение обрабатывается в новом потоке*/
                 new Thread(client).start();
             }
         } catch (IOException ex) {

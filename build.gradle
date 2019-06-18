@@ -2,11 +2,11 @@ plugins {
     id 'java'
 }
 
-group 'ru.eltex'
+group 'ru.agrmv'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'application'
-mainClassName = 'ru.eltex.Server.Main'
+mainClassName = 'ru.agrmv.Server.Main'
 sourceCompatibility = 1.8
 
 repositories {

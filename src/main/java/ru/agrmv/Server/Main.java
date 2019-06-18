@@ -1,4 +1,4 @@
-package ru.eltex.Server;
+package ru.agrmv.Server;
 
 /**
  * Класс, запуксающий сервер
@@ -11,13 +11,3 @@ public class Main {
         new Server();
     }
 }
-
-/**
- * TODO LIST:
- * 1) Аннотации
- *
- *
- * 2) отправка файлов
- *
- * 3) выводить количество участников
- * */

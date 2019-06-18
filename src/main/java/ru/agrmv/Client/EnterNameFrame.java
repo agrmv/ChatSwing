@@ -1,4 +1,4 @@
-package ru.eltex.Client;
+package ru.agrmv.Client;
 
 import javax.swing.*;
 import java.awt.*;

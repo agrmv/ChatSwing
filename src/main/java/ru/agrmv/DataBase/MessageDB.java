@@ -1,4 +1,4 @@
-package ru.eltex.DataBase;
+package ru.agrmv.DataBase;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

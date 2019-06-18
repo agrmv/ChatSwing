@@ -1,4 +1,4 @@
-package ru.eltex.Client;
+package ru.agrmv.Client;
 
 public class Main{
     public static void main(String[] args) {

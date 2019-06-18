@@ -1,6 +1,7 @@
-package ru.eltex.Client;
+package ru.agrmv.Client;
 
-import ru.eltex.DataBase.MessageDB;
+import ru.agrmv.DataBase.MessageDB;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +13,7 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
+
 
 /**
  * Класс, который описывает логику работы клиента

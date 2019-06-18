@@ -1,6 +1,5 @@
-package ru.eltex.Client;
+package ru.agrmv.Client;
 
-import ru.eltex.DataBase.MessageDB;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -16,27 +15,35 @@ import java.util.Scanner;
 /**
  * Класс, который описывает логику работы клиента
  * @author Алексей Громов
- * @version 1.0.5
- * */
+ */
 
-class Client extends MessageDB {
+class Client {
+    /** Адрес сервера */
     private static final String host = "localhost";
+
+    /** Порт - уникальный номер, с которым связан определённый сокетуникальный номер, с которым связан определённый сокет */
     private static final int port = 8080;
+
+    /** Запись в сокет (исходящее сообщение) */
     private PrintWriter outMessage;
+
+    /** Чтение из сокета (входящее сообщение) */
     private Scanner inMessage;
 
+    /** Клиенсткий сокет */
     private Socket clientSocket;
 
-    /**Поле для ввода сообщений*/
+    /** Поле для ввода сообщений */
     private JTextField jtfMessage;
-    /**Поле для вывода сообщений*/
+
+    /** Поле для вывода сообщений */
     private JTextArea jtaTextAreaMessage;
 
     private String clientName;
 
     Client(String clientName) {
         this.clientName = clientName;
-        try  {
+        try {
             /*Подключаемся к серверу*/
             clientSocket = new Socket(host, port);
 
@@ -68,31 +75,36 @@ class Client extends MessageDB {
 
     /**
      * Возвращает имя клиента(отправителя сообщения)
+     *
      * @return имя клиента
-     * */
-    public String getClientName() {
+     */
+    private String getClientName() {
         return this.clientName;
     }
 
     /**
      * Возвращает текущее время
+     *
      * @return текущее время
-     * */
-    public String getTime() {
+     */
+    private String getTime() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         return sdf.format(cal.getTime());
     }
 
-    /**Отправляет сообщения*/
+    /**
+     * Отправляет сообщения
+     */
     private void sendMessage() {
         outMessage.println(getTime() + "  " + getClientName() + ": " + jtfMessage.getText());
-        addToDB(getTime(), getClientName(), jtfMessage.getText());
         outMessage.flush();
         jtfMessage.setText("");
     }
 
-    /**Отрисовка интерфеса чата*/
+    /**
+     * Отрисовка интерфеса чата
+     */
     private void initClientFrame() throws IOException {
         /*Создаем окно чата*/
         JFrame clientFrame = new JFrame("Telegram");
@@ -104,7 +116,7 @@ class Client extends MessageDB {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         /*Устанавливаем положение окна по середине экрана*/
-        clientFrame.setBounds(screenSize.width/ 2 - 400,screenSize.height / 2 - 250, 800, 500);
+        clientFrame.setBounds(screenSize.width / 2 - 400, screenSize.height / 2 - 250, 800, 500);
 
         /*Запрещаем изменение размера*/
         clientFrame.setResizable(false);
@@ -142,17 +154,10 @@ class Client extends MessageDB {
             }
         });
 
-        /*Создаем кнопку "History" и добавляем ее на панель*/
-        JButton btnHistory = new JButton("History");
-        bottomPanel.add(btnHistory, BorderLayout.EAST);
-
-        /*Обработчик события нажатия на кнопку отправить*/
-        btnHistory.addActionListener(e -> showDB());
-
         /*Обработчик события нажатия на enter.*/
         jtfMessage.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode()==KeyEvent.VK_ENTER){
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     btnSend.doClick();
                 }
             }
@@ -180,7 +185,7 @@ class Client extends MessageDB {
                     } else {
                         outMessage.println("Member left the chat without introducing himself!");
                     }
-                    /**Отправляем служебное сосбщение, завершающие текущую сессию*/
+                    /*Отправляем служебное сосбщение, завершающие текущую сессию*/
                     outMessage.println("##session##end##");
                     outMessage.flush();
                     outMessage.close();

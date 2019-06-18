@@ -1,4 +1,4 @@
-package ru.eltex.Server;
+package ru.agrmv.Server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,8 +8,7 @@ import java.util.Scanner;
 /**
  * Класс, в котором обрабатывается подключение клиента к серверу
  * @author Алексей Громов
- * @version 1.0.1
- * */
+ */
 
 class ClientHandler implements Runnable {
 
@@ -30,7 +29,7 @@ class ClientHandler implements Runnable {
     /**
      * Переопределяем метод run(), который вызывается когда
      * мы вызываем new Thread(client).start();
-     * */
+     */
     @Override
     public void run() {
         try {
@@ -39,13 +38,13 @@ class ClientHandler implements Runnable {
                 break;
             }
             while (true) {
-                /**Если от клиента пришло сообщение*/
+                /*Если от клиента пришло сообщение*/
                 if (inMessage.hasNext()) {
                     String clientMessage = inMessage.nextLine();
                     if (clientMessage.equalsIgnoreCase("##session##end##")) {
                         break;
                     }
-                    /**Отправляем сообщение всем клиентам*/
+                    /*Отправляем сообщение всем клиентам*/
                     server.sendMessageToAllClients(clientMessage);
                 }
                 Thread.sleep(100);
@@ -56,6 +55,7 @@ class ClientHandler implements Runnable {
             this.close();
         }
     }
+
     void sendMessage(String message) {
         try {
             outMessage.println(message);

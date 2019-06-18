@@ -1,4 +1,4 @@
-package ru.eltex.Client;
+package ru.agrmv.Client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +10,12 @@ import java.awt.event.KeyEvent;
 /**
  * Класс, который описывает окно для ввода имени
  * @author Alekse Gromov
- * @version 1.0.3
- * */
+ */
 
-class EnterNameFrame  {
-    /**Поле для ввода имени*/
+class EnterNameFrame {
+    /**
+     * Поле для ввода имени
+     */
     private JTextField jtfName;
     private String clientName;
 
@@ -25,9 +26,9 @@ class EnterNameFrame  {
     private void initEnterNameFrame() {
         JFrame enterNameFrame = new JFrame("Enter your name");
         enterNameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        /**Получаем размер экрана*/
+        /*Получаем размер экрана*/
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        enterNameFrame.setBounds(screenSize.width/ 2 - 100,screenSize.height / 2 - 35, 200, 70);
+        enterNameFrame.setBounds(screenSize.width / 2 - 100, screenSize.height / 2 - 35, 200, 70);
         enterNameFrame.setResizable(false);
 
         JPanel bottomPanel = new JPanel();
@@ -38,10 +39,10 @@ class EnterNameFrame  {
         JButton btnOk = new JButton("Ok");
         bottomPanel.add(btnOk);
 
-        /**Обработчик события нажатия на enter.*/
+        /*Обработчик события нажатия на enter.*/
         jtfName.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode()==KeyEvent.VK_ENTER){
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (!jtfName.getText().trim().isEmpty()) {
                         btnOk.doClick();
                     }
@@ -49,7 +50,7 @@ class EnterNameFrame  {
             }
         });
 
-        /**Обработчик фокуса для поля ввода имени.*/
+        /*Обработчик фокуса для поля ввода имени.*/
         jtfName.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -57,7 +58,7 @@ class EnterNameFrame  {
             }
         });
 
-        /**Обработчик события нажатия на кнопку Ok.*/
+        /*Обработчик события нажатия на кнопку Ok.*/
         btnOk.addActionListener(e -> {
             if (!jtfName.getText().trim().isEmpty()) {
                 clientName = jtfName.getText();
